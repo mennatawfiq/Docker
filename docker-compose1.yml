@@ -1,0 +1,31 @@
+services:
+  mysql_database:
+    environment:
+      MYSQL_DATABASE: wp_db
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: wp_user
+    image: mysql
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql:rw
+  wordpress:
+    depends_on:
+      mysql_database:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: mysql_database:3306
+      WORDPRESS_DB_NAME: wp_db
+      WORDPRESS_DB_PASSWORD: 1234
+      WORDPRESS_DB_USER: wp_user
+    image: wordpress:latest
+    ports:
+      - published: 8088
+        target: 80
+    restart: always
+    volumes:
+      - {} # put the url inside curly braces
+version: '3.9'
+volumes:
+  mysql: {}
+# creating wordpress&mysql layers
